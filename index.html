@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestia PFB transaction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #7B2BF9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+        }
+
+        button {
+            background-color: #7B2BF9;
+            color: white;
+            padding: 10px 24px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        async function displayResult() {
+            var inputElement1 = document.getElementById("inputElement1");
+            var inputElement2 = document.getElementById("inputElement2");
+            var resultBox = document.getElementById("resultBox");
+
+            var request = {
+                namespace_id: inputElement1.value,
+                data: inputElement2.value,
+                gas_limit: 80000,
+                fee: 2000
+            };
+
+            try {
+                var response = await fetch("http://localhost:26659/submit_pfb", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(request)
+                });
+
+                if (response.ok) {
+                    var result = await response.json();
+                    resultBox.value = JSON.stringify(result);
+                } else {
+                    resultBox.value = "Error: " + response.status;
+                }
+            } catch (error) {
+                resultBox.value = "Error: " + error.message;
+            }
+        }
+    </script>
+</head>
+<body>
+    <form>
+        <img src="https://celestia.org/static/celestia-logo-29451ae35d3bb72cc4b0f17712d44c3a.svg" style="width: 100%; max-width: 300px; display: block; margin: 0 auto 20px;">
+        <h1>Celestia PFB transaction</h1>
+        <h4>Please insert your namespace_id and data.</h4>
+        <br>
+        <label>If you don't have a namespace_id and data, you can create them here: </label>
+        <br>
+        <a href="https://go.dev/play/p/7ltvaj8lhRl" target="_blank">Go Playground</a>
+        <br>
+        <br>
+        <label for="inputElement1">namespace_id</label>
+        <input type="text" id="inputElement1" name="inputElement1">
+        <br>
+        <label for="inputElement2">data</label>
+        <input type="text" id="inputElement2" name="inputElement2">
+        <br>
+        <button type="button" onclick="displayResult()">Display Result</button>
+        <br>
+        <label for="resultBox">Result:</label>
+        <textarea id="resultBox" name="resultBox" rows="4" cols="50" readonly></textarea>
+    </form>
+</body>
+</html>
